@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 x:Class="Miracle.Views.ProductionPage"
+			 xmlns:controls="clr-namespace:Miracle.Controls"
+			 xmlns:vm="clr-namespace:Miracle.ViewModels" 
+             xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms"
+             Title="Production">
+
+
+	<ContentPage.BindingContext>
+		<vm:ProductionViewModel x:Name="vm"/>
+	</ContentPage.BindingContext>
+
+	<ContentPage.Content>
+		<Grid RowSpacing="0" ColumnSpacing="0" Padding="0,0,0,0" Margin="0,0,0,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="50" />
+				<RowDefinition Height="50" />
+				<RowDefinition Height="300" /> <!--그래프-->
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="80" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="70" />
+			</Grid.ColumnDefinitions>
+
+			<Label Grid.Row="0" Grid.Column="0" Text="생산일자" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+			<StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+				<DatePicker x:Name="dtFrom" Date="{Binding DtFrom, Mode=TwoWay}" Format="yyyy-MM-dd" HorizontalOptions="Center" VerticalOptions="Center"/>
+				<Label Text="~" HorizontalOptions="Center" VerticalOptions="Center"/>
+				<DatePicker x:Name="dtTo" Date="{Binding DtTo, Mode=TwoWay}" Format="yyyy-MM-dd" HorizontalOptions="Center" VerticalOptions="Center"/>
+			</StackLayout>
+
+            <Label Grid.Row="1" Grid.Column="0" Text="공장" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <Picker
+				Grid.Row="1" 
+				Grid.Column="1" 
+				Grid.ColumnSpan="2"
+				Title="공장 선택"
+				ItemsSource="{Binding FactoryList}"
+				ItemDisplayBinding="{Binding Name}"
+				SelectedItem="{Binding SelectedFactory, Mode=TwoWay}">
+
+            </Picker>
+
+            <Button Text="조회" Command="{Binding SearchCommand}" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"/>
+
+            <Grid RowSpacing="0" ColumnSpacing="0" Padding="0,0,0,0" Margin="0,0,0,0"
+                Grid.Row="2" 
+                Grid.ColumnSpan="3">
+                <oxy:PlotView 
+                    x:Name ="PlotChart"
+                    Model="{Binding PlotChartModel}"
+                    BackgroundColor="White"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"/>
+            </Grid>
+            
+            <ScrollView
+				Grid.Row="3"
+				Grid.ColumnSpan="3"
+				Orientation="Horizontal"
+				HorizontalScrollBarVisibility="Always"
+				VerticalScrollBarVisibility="Always"
+				HorizontalOptions="FillAndExpand"
+				VerticalOptions="FillAndExpand"
+				x:Name="scrollView">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid x:Name="HeaderGrid" Grid.Row="0" RowSpacing="0"  ColumnSpacing="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <controls:DataGridHeader Text="생산일자" SortingEnabled="True" HorizontalTextAlignment="Center" Grid.Row="0" Grid.Column="0" FieldName="ProductionDate" BindingContext="{x:Reference vm}"/>
+                        <controls:DataGridHeader Text="공장" SortingEnabled="True" HorizontalTextAlignment="Center" Grid.Row="0" Grid.Column="1" FieldName="FactoryNo" BindingContext="{x:Reference vm}"/>
+                        <controls:DataGridHeader Text="생산 합계" SortingEnabled="True" HorizontalTextAlignment="Center" Grid.Row="0" Grid.Column="2" FieldName="ProductionQuantity" BindingContext="{x:Reference vm}"/>                        
+                    </Grid>
+
+                    <CollectionView
+						x:Name="collectionView"
+						Grid.Row="1"
+						SelectionMode="Single"
+						ItemsSource="{Binding SearchResult}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnSpacing="0" RowSpacing="0" HeightRequest="40">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Text="{Binding ProductionDate}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding FactoryNo}" HorizontalOptions="Center" />
+                                    <Label Grid.Column="2" Text="{Binding ProductionQuantity}" HorizontalOptions="End" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </ScrollView>
+
+        </Grid>
+	</ContentPage.Content>
+
+</ContentPage>
